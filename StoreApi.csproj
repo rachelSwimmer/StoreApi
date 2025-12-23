@@ -1,10 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>a50569e6-9318-4ad2-9a66-b66c5108c573</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="StoreApi.Tests/**" />
+    <EmbeddedResource Remove="StoreApi.Tests/**" />
+    <None Remove="StoreApi.Tests/**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />

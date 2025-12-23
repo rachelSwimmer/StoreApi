@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using StoreApi.DTOs;
 using StoreApi.Interfaces;
 
@@ -87,8 +88,10 @@ public class ProductsController : ControllerBase
     }
     
     [HttpPost]
+    [Authorize] // Only authenticated users with valid JWT token can create products
     [ProducesResponseType(typeof(ProductResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ProductResponseDto>> Create([FromBody] ProductCreateDto createDto)
     {
         try

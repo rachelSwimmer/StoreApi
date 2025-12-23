@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using StoreApi.Data;
 using StoreApi.Interfaces;
@@ -10,15 +11,15 @@ using StoreApi.Middleware;
 using Serilog;
 
 // Configure Serilog
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json")
-        .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
-        .Build())
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
+// Log.Logger = new LoggerConfiguration()
+//     .ReadFrom.Configuration(new ConfigurationBuilder()
+//         .AddJsonFile("appsettings.json")
+//         .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+//         .Build())
+//     .Enrich.FromLogContext()
+//     .WriteTo.Console()
+//     .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+//     .CreateLogger();
 
 try
 {
@@ -32,7 +33,33 @@ try
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter your JWT token in the format: Bearer {token}"
+    });
+    
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 // Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
