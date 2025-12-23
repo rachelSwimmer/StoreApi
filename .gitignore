@@ -402,6 +402,9 @@ FodyWeavers.xsd
 Logs/
 *.txt
 
+test
+test.pub
+
 # appsettings with sensitive data (optional - uncomment if needed)
-# appsettings.Development.json
-# appsettings.Production.json
+appsettings.Development.json
+appsettings.Production.json
