@@ -88,10 +88,11 @@ public class ProductsController : ControllerBase
     }
     
     [HttpPost]
-    [Authorize] // Only authenticated users with valid JWT token can create products
+    [Authorize(Roles = "Manager,Admin")] // Only Manager or Admin can create products
     [ProducesResponseType(typeof(ProductResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ProductResponseDto>> Create([FromBody] ProductCreateDto createDto)
     {
         try
@@ -106,9 +107,12 @@ public class ProductsController : ControllerBase
     }
     
     [HttpPut("{id}")]
+    [Authorize(Roles = "Manager,Admin")] // Only Manager or Admin can update products
     [ProducesResponseType(typeof(ProductResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ProductResponseDto>> Update(int id, [FromBody] ProductUpdateDto updateDto)
     {
         try
@@ -129,8 +133,11 @@ public class ProductsController : ControllerBase
     }
     
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")] // Only Admin can delete products
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _productService.DeleteProductAsync(id);

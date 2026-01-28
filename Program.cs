@@ -65,9 +65,19 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Register DapperContext for ADO.NET/Dapper repositories
+builder.Services.AddSingleton<DapperContext>();
+
 // Register Repositories (Scoped - one instance per request)
+// Note: Choose ONE implementation for IProductRepository:
+//   - ProductRepository: Uses Entity Framework Core (default)
+//   - ProductAdoRepository: Uses raw ADO.NET
+//   - ProductDapperRepository: Uses Dapper micro-ORM
+// To switch, uncomment the desired implementation below:
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+// builder.Services.AddScoped<IProductRepository, ProductAdoRepository>();  // ADO.NET
+// builder.Services.AddScoped<IProductRepository, ProductDapperRepository>(); // Dapper
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 

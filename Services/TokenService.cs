@@ -7,7 +7,7 @@ namespace StoreApi.Services;
 
 public interface ITokenService
 {
-    string GenerateToken(int userId, string email, string firstName, string lastName);
+    string GenerateToken(int userId, string email, string firstName, string lastName, string role);
 }
 
 public class TokenService : ITokenService
@@ -21,7 +21,7 @@ public class TokenService : ITokenService
         _logger = logger;
     }
     
-    public string GenerateToken(int userId, string email, string firstName, string lastName)
+    public string GenerateToken(int userId, string email, string firstName, string lastName, string role)
     {
         var jwtSettings = _configuration.GetSection("JwtSettings");
         var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey is not configured");
@@ -39,7 +39,8 @@ public class TokenService : ITokenService
             new Claim(JwtRegisteredClaimNames.GivenName, firstName),
             new Claim(JwtRegisteredClaimNames.FamilyName, lastName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString())
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+            new Claim(ClaimTypes.Role, role)
         };
         
         var token = new JwtSecurityToken(

@@ -14,6 +14,7 @@ namespace StoreApi.Tests;
 /// Integration tests that test the full flow from Service -> Repository -> Database
 /// Using In-Memory database instead of mocking
 /// </summary>
+[Trait("Category", "Integration")]
 public class ProductServiceIntegrationTests : IDisposable
 {
     private readonly ApplicationDbContext _context;

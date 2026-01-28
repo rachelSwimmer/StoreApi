@@ -50,11 +50,12 @@ public class UserService : IUserService
             Email = createDto.Email,
             PasswordHash = HashPassword(createDto.Password), // Simplified - use proper hashing
             Phone = createDto.Phone,
-            Address = createDto.Address
+            Address = createDto.Address,
+            Role = createDto.Role
         };
         
         var createdUser = await _userRepository.CreateAsync(user);
-        _logger.LogInformation("User created with ID: {UserId}", createdUser.Id);
+        _logger.LogInformation("User created with ID: {UserId}, Role: {Role}", createdUser.Id, createdUser.Role);
         
         return MapToResponseDto(createdUser);
     }
@@ -77,6 +78,7 @@ public class UserService : IUserService
         if (updateDto.LastName != null) existingUser.LastName = updateDto.LastName;
         if (updateDto.Phone != null) existingUser.Phone = updateDto.Phone;
         if (updateDto.Address != null) existingUser.Address = updateDto.Address;
+        if (updateDto.Role.HasValue) existingUser.Role = updateDto.Role.Value;
         
         var updatedUser = await _userRepository.UpdateAsync(existingUser);
         return updatedUser != null ? MapToResponseDto(updatedUser) : null;
@@ -105,7 +107,7 @@ public class UserService : IUserService
             return null;
         }
         
-        var token = _tokenService.GenerateToken(user.Id, user.Email, user.FirstName, user.LastName);
+        var token = _tokenService.GenerateToken(user.Id, user.Email, user.FirstName, user.LastName, user.Role.ToString());
         var expiryMinutes = _configuration.GetValue<int>("JwtSettings:ExpiryMinutes", 60);
         
         _logger.LogInformation("User {UserId} authenticated successfully", user.Id);
@@ -129,6 +131,7 @@ public class UserService : IUserService
             Email = user.Email,
             Phone = user.Phone,
             Address = user.Address,
+            Role = user.Role.ToString(),
             CreatedAt = user.CreatedAt
         };
     }

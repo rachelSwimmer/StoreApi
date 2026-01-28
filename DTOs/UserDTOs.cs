@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using StoreApi.Models;
 
 namespace StoreApi.DTOs;
 
@@ -27,6 +28,11 @@ public class UserCreateDto
     
     [MaxLength(500)]
     public string Address { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// User role: Customer (0), Manager (1), Admin (2). Defaults to Customer.
+    /// </summary>
+    public UserRole Role { get; set; } = UserRole.Customer;
 }
 
 public class UserUpdateDto
@@ -47,6 +53,11 @@ public class UserUpdateDto
     
     [MaxLength(500)]
     public string? Address { get; set; }
+    
+    /// <summary>
+    /// User role: Customer (0), Manager (1), Admin (2)
+    /// </summary>
+    public UserRole? Role { get; set; }
 }
 
 public class UserResponseDto
@@ -57,5 +68,6 @@ public class UserResponseDto
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
 }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace StoreApi.Tests;
 
+[Trait("Category", "Unit")]
 public class ProductServiceTests
 {
     [Fact]

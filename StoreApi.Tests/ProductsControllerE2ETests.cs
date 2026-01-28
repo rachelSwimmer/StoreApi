@@ -16,6 +16,7 @@ namespace StoreApi.Tests;
 /// HTTP Request -> Controller -> Service -> Repository -> Database -> HTTP Response
 /// Uses WebApplicationFactory to spin up a real test server
 /// </summary>
+[Trait("Category", "E2E")]
 public class ProductsControllerE2ETests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly HttpClient _client;
