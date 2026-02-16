@@ -38,7 +38,8 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Description).HasMaxLength(1000);
-            entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.Price).HasColumnType("decimal(1" +
+                "8,2)");
         });
         
         // User configuration
@@ -64,6 +65,11 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(18,2)");
             entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
             entity.Property(e => e.ShippingAddress).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.PaymentMethod)
+                .HasConversion<string>()
+                .HasMaxLength(50);
+            entity.Property(e => e.PaymentStatus).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.TransactionId).HasMaxLength(200);
             entity.HasMany(e => e.OrderItems)
                 .WithOne(e => e.Order)
                 .HasForeignKey(e => e.OrderId)

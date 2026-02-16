@@ -11,7 +11,8 @@ public class User
     public string Address { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    
+    public string Type { get; set; } = "customer"; // Default to customer, can be "manager" or "customer"
+
     // Navigation properties
     public ICollection<Order> Orders { get; set; } = new List<Order>();
 }

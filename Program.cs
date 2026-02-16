@@ -10,16 +10,14 @@ using StoreApi.Services;
 using StoreApi.Middleware;
 using Serilog;
 
-// Configure Serilog
-// Log.Logger = new LoggerConfiguration()
-//     .ReadFrom.Configuration(new ConfigurationBuilder()
-//         .AddJsonFile("appsettings.json")
-//         .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
-//         .Build())
-//     .Enrich.FromLogContext()
-//     .WriteTo.Console()
-//     .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-//     .CreateLogger();
+//Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json")
+        .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+        .Build())
+    .Enrich.FromLogContext()
+    .CreateLogger();
 
 try
 {
@@ -126,16 +124,17 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
 
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+    // Configure the HTTP request pipeline
 
 
-// 1. Request Logging
-app.UseRequestLogging();
+    // 1. Request Logging
+    app.UseRequestLogging();
 
-//2. Rate Limiting (optional - comment out if not needed)
-app.UseRateLimiting();
+    //2. Rate Limiting (optional - comment out if not needed)
+    app.UseRateLimiting();
 
 
 

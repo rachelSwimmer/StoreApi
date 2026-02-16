@@ -27,6 +27,9 @@ public class UserCreateDto
     
     [MaxLength(500)]
     public string Address { get; set; } = string.Empty;
+    
+    [MaxLength(20)]
+    public string Type { get; set; } = "customer"; // Default to customer, can be "manager" or "customer"
 }
 
 public class UserUpdateDto
@@ -47,6 +50,9 @@ public class UserUpdateDto
     
     [MaxLength(500)]
     public string? Address { get; set; }
+    
+    [MaxLength(20)]
+    public string? Type { get; set; }
 }
 
 public class UserResponseDto
@@ -57,5 +63,6 @@ public class UserResponseDto
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
 }

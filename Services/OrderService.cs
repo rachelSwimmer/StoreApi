@@ -86,6 +86,8 @@ public class OrderService : IOrderService
             ShippingAddress = createDto.ShippingAddress,
             TotalAmount = totalAmount,
             Status = "Pending",
+            PaymentMethod = createDto.PaymentMethod,
+            PaymentStatus = "Pending",
             OrderItems = orderItems
         };
         
@@ -128,6 +130,17 @@ public class OrderService : IOrderService
             }
         }
         
+        if (updateDto.PaymentStatus != null)
+        {
+            var validPaymentStatuses = new[] { "Pending", "Completed", "Failed", "Refunded" };
+            if (!validPaymentStatuses.Contains(updateDto.PaymentStatus))
+            {
+                throw new ArgumentException($"Invalid payment status. Valid values are: {string.Join(", ", validPaymentStatuses)}");
+            }
+            
+            existingOrder.PaymentStatus = updateDto.PaymentStatus;
+        }
+        
         var updatedOrder = await _orderRepository.UpdateAsync(existingOrder);
         return updatedOrder != null ? MapToResponseDto(updatedOrder) : null;
     }
@@ -150,6 +163,9 @@ public class OrderService : IOrderService
             OrderDate = order.OrderDate,
             ShippedDate = order.ShippedDate,
             DeliveredDate = order.DeliveredDate,
+            PaymentMethod = order.PaymentMethod,
+            PaymentStatus = order.PaymentStatus,
+            TransactionId = order.TransactionId,
             OrderItems = order.OrderItems?.Select(oi => new OrderItemResponseDto
             {
                 Id = oi.Id,

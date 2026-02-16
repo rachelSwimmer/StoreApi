@@ -50,7 +50,8 @@ public class UserService : IUserService
             Email = createDto.Email,
             PasswordHash = HashPassword(createDto.Password), // Simplified - use proper hashing
             Phone = createDto.Phone,
-            Address = createDto.Address
+            Address = createDto.Address,
+            Type = createDto.Type
         };
         
         var createdUser = await _userRepository.CreateAsync(user);
@@ -77,6 +78,7 @@ public class UserService : IUserService
         if (updateDto.LastName != null) existingUser.LastName = updateDto.LastName;
         if (updateDto.Phone != null) existingUser.Phone = updateDto.Phone;
         if (updateDto.Address != null) existingUser.Address = updateDto.Address;
+        if (updateDto.Type != null) existingUser.Type = updateDto.Type;
         
         var updatedUser = await _userRepository.UpdateAsync(existingUser);
         return updatedUser != null ? MapToResponseDto(updatedUser) : null;
@@ -105,7 +107,7 @@ public class UserService : IUserService
             return null;
         }
         
-        var token = _tokenService.GenerateToken(user.Id, user.Email, user.FirstName, user.LastName);
+        var token = _tokenService.GenerateToken(user.Id, user.Email, user.FirstName, user.LastName, user.Type);
         var expiryMinutes = _configuration.GetValue<int>("JwtSettings:ExpiryMinutes", 60);
         
         _logger.LogInformation("User {UserId} authenticated successfully", user.Id);
@@ -129,6 +131,7 @@ public class UserService : IUserService
             Email = user.Email,
             Phone = user.Phone,
             Address = user.Address,
+            Type = user.Type,
             CreatedAt = user.CreatedAt
         };
     }

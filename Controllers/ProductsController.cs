@@ -7,6 +7,7 @@ namespace StoreApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = "manager")] // Only managers can access product management
 public class ProductsController : ControllerBase
 {
     private readonly IProductService _productService;
@@ -88,10 +89,8 @@ public class ProductsController : ControllerBase
     }
     
     [HttpPost]
-    [Authorize] // Only authenticated users with valid JWT token can create products
     [ProducesResponseType(typeof(ProductResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ProductResponseDto>> Create([FromBody] ProductCreateDto createDto)
     {
         try
@@ -131,6 +130,8 @@ public class ProductsController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _productService.DeleteProductAsync(id);

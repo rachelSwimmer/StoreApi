@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using StoreApi.DTOs;
 using StoreApi.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StoreApi.Controllers;
+
+
 
 [ApiController]
 [Route("api/[controller]")]
@@ -20,22 +23,30 @@ public class CategoriesController : ControllerBase
     }
     
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<CategoryResponseDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<CategoryResponseDto>>> GetAll()
     {
-        var categories = await _categoryService.GetAllCategoriesAsync();
-        return Ok(categories);
+        try
+        {
+            _logger.LogInformation("start GetAllCategories from function GetAll");
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            return Ok(categories);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed GetAll");
+            return BadRequest("Failed GetAll");
+
+        }
     }
     
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<CategoryResponseDto>> GetById(int id)
     {
         var category = await _categoryService.GetCategoryByIdAsync(id);
         
         if (category == null)
         {
+            _logger.LogWarning($"GetById try to get Category with ID {id} not found.");
             return NotFound(new { message = $"Category with ID {id} not found." });
         }
         
@@ -43,25 +54,23 @@ public class CategoriesController : ControllerBase
     }
     
     [HttpPost]
-    [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<CategoryResponseDto>> Create([FromBody] CategoryCreateDto createDto)
     {
         try
         {
             var category = await _categoryService.CreateCategoryAsync(createDto);
+            _logger.LogInformation("Create category, category Name: {CategoryName}", createDto.Name  );
+
             return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
         }
         catch (ArgumentException ex)
         {
+            _logger.LogError(ex,"Error occurred while creating , category Name: {CategoryName}", createDto.Name  );
             return BadRequest(new { message = ex.Message });
         }
     }
     
     [HttpPut("{id}")]
-    [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<CategoryResponseDto>> Update(int id, [FromBody] CategoryUpdateDto updateDto)
     {
         try
@@ -82,8 +91,6 @@ public class CategoriesController : ControllerBase
     }
     
     [HttpDelete("{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _categoryService.DeleteCategoryAsync(id);

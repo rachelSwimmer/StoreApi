@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using StoreApi.Models;
 
 namespace StoreApi.DTOs;
 
@@ -10,6 +11,9 @@ public class OrderCreateDto
     [Required]
     [MaxLength(500)]
     public string ShippingAddress { get; set; } = string.Empty;
+    
+    [Required]
+    public PaymentMethod PaymentMethod { get; set; }
     
     [Required]
     [MinLength(1, ErrorMessage = "Order must contain at least one item")]
@@ -32,6 +36,8 @@ public class OrderUpdateDto
     public string? ShippingAddress { get; set; }
     
     public string? Status { get; set; } // Pending, Processing, Shipped, Delivered, Cancelled
+    
+    public string? PaymentStatus { get; set; } // Pending, Completed, Failed, Refunded
 }
 
 public class OrderResponseDto
@@ -45,6 +51,9 @@ public class OrderResponseDto
     public DateTime OrderDate { get; set; }
     public DateTime? ShippedDate { get; set; }
     public DateTime? DeliveredDate { get; set; }
+    public PaymentMethod PaymentMethod { get; set; }
+    public string PaymentStatus { get; set; } = string.Empty;
+    public string? TransactionId { get; set; }
     public List<OrderItemResponseDto> OrderItems { get; set; } = new();
 }
 

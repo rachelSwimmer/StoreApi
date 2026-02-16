@@ -18,8 +18,10 @@ public class RequestLoggingMiddleware
         var stopwatch = Stopwatch.StartNew();
         var requestPath = context.Request.Path;
         var requestMethod = context.Request.Method;
+        var body = context.Request.Body;
+
         
-        _logger.LogInformation("Incoming Request: {Method} {Path}", requestMethod, requestPath);
+        _logger.LogInformation("Incoming Request: {Method} {Path} {Body}", requestMethod, requestPath, body);
         
         try
         {
